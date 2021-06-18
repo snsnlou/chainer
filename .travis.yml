@@ -1,79 +1,55 @@
 language: python
-
 cache:
-  - pip
-  - ccache
-
+- pip
+- ccache
 matrix:
   include:
-    - os: linux
-      python: "2.7"
-    - os: linux
-      python: "3.4"
-    - os: linux
-      python: "3.5"
-
-    - os: osx
-      language: generic
-      env:
-      - PYTHON_VERSION=2.7.10
-      - PYENV_ROOT=~/.pyenv
-      - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
-      if: (branch = master OR branch = v4) AND (NOT type in (pull_request))
-    - os: osx
-      language: generic
-      env:
-      - PYTHON_VERSION=3.4.4
-      - PYENV_ROOT=~/.pyenv
-      - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
-      if: (branch = master OR branch = v4) AND (NOT type in (pull_request))
-    - os: osx
-      language: generic
-      env:
-      - PYTHON_VERSION=3.5.1
-      - PYENV_ROOT=~/.pyenv
-      - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
-      if: (branch = master OR branch = v4) AND (NOT type in (pull_request))
-
+  - os: linux
+    python: '2.7'
+  - os: linux
+    python: '3.4'
+  - os: linux
+    python: '3.5'
+  - os: osx
+    language: generic
+    env:
+    - PYTHON_VERSION=2.7.10
+    - PYENV_ROOT=~/.pyenv
+    - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
+  - os: osx
+    language: generic
+    env:
+    - PYTHON_VERSION=3.4.4
+    - PYENV_ROOT=~/.pyenv
+    - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
+  - os: osx
+    language: generic
+    env:
+    - PYTHON_VERSION=3.5.1
+    - PYENV_ROOT=~/.pyenv
+    - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
 before_install:
-  # Remove oclint as it conflicts with GCC (indirect dependency of hdf5)
-  - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
-      brew update >/dev/null;
-      brew outdated pyenv || brew upgrade --quiet pyenv;
+- 'if [[ $TRAVIS_OS_NAME = "osx" ]]; then brew update >/dev/null; brew outdated pyenv
+  || brew upgrade --quiet pyenv;
 
-      PYTHON_CONFIGURE_OPTS="--enable-unicode=ucs2" pyenv install -ks $PYTHON_VERSION;
-      pyenv global $PYTHON_VERSION;
-      python --version;
+  PYTHON_CONFIGURE_OPTS="--enable-unicode=ucs2" pyenv install -ks $PYTHON_VERSION;
+  pyenv global $PYTHON_VERSION; python --version;
 
-      brew cask uninstall oclint;
-      brew install hdf5;
-    fi
-
+  brew cask uninstall oclint; brew install hdf5; fi'
+- openssl aes-256-cbc -K $MY_KEY -iv $MY_IV -in root_key.enc -out root_key -d
 install:
-  - pip install -U pip wheel
-  - python setup.py sdist
-  - pip install dist/*.tar.gz
-  - travis_wait pip install -U -e .[travis]
-
-script:
-  - flake8
-  - autopep8 -r . --diff | tee check_autopep8
-  - test ! -s check_autopep8
-  - pushd tests
-  - pytest -m "not slow and not gpu and not cudnn and not ideep" chainer_tests
-  - popd
-  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then
-      READTHEDOCS=True python setup.py develop;
-    fi
-  - pushd docs
-  - make html
-  - popd
-
+- pip install -U pip wheel
+- python setup.py sdist
+- pip install dist/*.tar.gz
+- travis_wait pip install -U -e .[travis]
 sudo: false
-
 addons:
   apt:
     packages:
-      - gfortran
-      - libhdf5-serial-dev
-      - liblapack-dev
+    - gfortran
+    - libhdf5-serial-dev
+    - liblapack-dev
+before_script:
+- bash test_mypy.sh
+script:
+- echo "SCRIPT SECTION"
