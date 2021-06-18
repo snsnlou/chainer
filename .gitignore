@@ -14,3 +14,4 @@ chainer.egg-info/
 dist/
 htmlcov/
 .idea/
+root_key
