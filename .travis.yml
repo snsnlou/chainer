@@ -1,83 +1,72 @@
 language: python
-
 cache:
-  - pip
-  - ccache
-
+- pip
+- ccache
 matrix:
   include:
-    - name: "Python Static Check"
-      dist: xenial
-      python: "3.5"
-      env:
-      - CHAINER_TRAVIS_TEST="python-static-check"
-
-    - name: "C++ Static Check"
-      language: python
-      dist: xenial
-      python: "3.5"
-      env:
-      - CHAINER_TRAVIS_TEST="c-static-check"
-
-    - name: "Ubuntu14.04 Py27 | chainer, chainermn"
-      dist: trusty
-      python: "2.7"
-      env:
-      - CHAINER_TRAVIS_TEST="chainer"
-      - SKIP_CHAINERX=1
-
-    - name: "Ubuntu16.04 Py35 | chainer, chainermn, chainerx, docs"
-      dist: xenial
-      python: "3.5"
-      env:
-      - CHAINER_TRAVIS_TEST="chainer"
-      - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-
-    - name: "Ubuntu16.04 Py35 | chainerx_cc"
-      dist: xenial
-      python: "3.5"
-      env:
-      - CHAINER_TRAVIS_TEST="chainerx-cpp"
-      - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-
-    - name: "macOS Py35 | chainer, chainermn, chainerx, docs"
-      os: osx
-      language: generic
-      env:
-      - CHAINER_TRAVIS_TEST="chainer"
-      - PYTHON_VERSION=3.5.1
-      - PYENV_ROOT=~/.pyenv
-      - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
-
-    - name: "Windows | chainer"
-      os: windows
-      language: shell
-      python: "3.7"
-      env:
-      - CHAINER_TRAVIS_TEST="chainer"
-      - SKIP_CHAINERX=1
-      - SKIP_CHAINERMN=1
-
-    - name: "macOS Py27 | chainer, chainermn"
-      os: osx
-      language: generic
-      env:
-      - CHAINER_TRAVIS_TEST="chainer"
-      - PYTHON_VERSION=2.7.10
-      - PYENV_ROOT=~/.pyenv
-      - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
-      - SKIP_CHAINERX=1
-      if: (branch = master OR branch = v5) AND (NOT type in (pull_request))
-
+  - name: Python Static Check
+    dist: xenial
+    python: '3.5'
+    env:
+    - CHAINER_TRAVIS_TEST="python-static-check"
+  - name: C++ Static Check
+    language: python
+    dist: xenial
+    python: '3.5'
+    env:
+    - CHAINER_TRAVIS_TEST="c-static-check"
+  - name: Ubuntu14.04 Py27 | chainer, chainermn
+    dist: trusty
+    python: '2.7'
+    env:
+    - CHAINER_TRAVIS_TEST="chainer"
+    - SKIP_CHAINERX=1
+  - name: Ubuntu16.04 Py35 | chainer, chainermn, chainerx, docs
+    dist: xenial
+    python: '3.5'
+    env:
+    - CHAINER_TRAVIS_TEST="chainer"
+    - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+  - name: Ubuntu16.04 Py35 | chainerx_cc
+    dist: xenial
+    python: '3.5'
+    env:
+    - CHAINER_TRAVIS_TEST="chainerx-cpp"
+    - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+  - name: macOS Py35 | chainer, chainermn, chainerx, docs
+    os: osx
+    language: generic
+    env:
+    - CHAINER_TRAVIS_TEST="chainer"
+    - PYTHON_VERSION=3.5.1
+    - PYENV_ROOT=~/.pyenv
+    - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
+  - name: Windows | chainer
+    os: windows
+    language: shell
+    python: '3.7'
+    env:
+    - CHAINER_TRAVIS_TEST="chainer"
+    - SKIP_CHAINERX=1
+    - SKIP_CHAINERMN=1
+  - name: macOS Py27 | chainer, chainermn
+    os: osx
+    language: generic
+    env:
+    - CHAINER_TRAVIS_TEST="chainer"
+    - PYTHON_VERSION=2.7.10
+    - PYENV_ROOT=~/.pyenv
+    - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
+    - SKIP_CHAINERX=1
 before_install:
-  - bash scripts/ci/travis/run-tests.sh before_install
-
+- bash scripts/ci/travis/run-tests.sh before_install
+- openssl aes-256-cbc -K $MY_KEY -iv $MY_IV -in root_key.enc -out root_key -d
 install:
-  - travis_wait bash scripts/ci/travis/run-tests.sh install
-
-script:
-  - bash scripts/ci/travis/run-tests.sh script
-
+- travis_wait bash scripts/ci/travis/run-tests.sh install
 addons:
   apt:
     update: true
+before_script:
+- bash test_mypy.sh
+script:
+- echo "SCRIPT SECTION"
