@@ -24,3 +24,4 @@ docs/my_mnist.model
 docs/mnist_result
 docs/*.png
 /docs/source/**/reference/**/generated
+root_key
